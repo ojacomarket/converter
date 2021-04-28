@@ -1,0 +1,15 @@
+########################## C O N V E R T I O N S ############################
+Angles are typically measured in radians, if not stated differently.
+
+360 degrees = 1 full circle
+2 PI radians = 1 full circle
+1 radian = PI / 180 degrees (which make sense, since PI = 180 degrees)
+
+
+Geocentric coordinates = Cartesian coordinates = has origin at (0,0,0), where (0,0,0) is a center of Earth's mass
+
+Cartesian coordinate system is laid as follows:
+- Z axis points to North (positives to North)
+- X axis points to intersection between Greenwich meridian and equator (positives to East)
+- Y axis rotated to +90 degress along equatorial plane
+
