@@ -33,6 +33,6 @@ public class WGS84 {
 
     public double get_radius_of_curvature_on_prime_vertical (Kaev_Left kaevLeft, WGS84 earth) {
         return earth.semi_major_axis_radius / (Math.sqrt
-                (1 - (earth.eccentricity_square * Math.pow(Math.sin(kaevLeft.getGeodetic_latitude() * Math.PI / 180), 2))));
+                (1 - (earth.eccentricity_square * Math.pow(Math.sin(kaevLeft.getGeodetic_latitude()), 2))));
     }
 }

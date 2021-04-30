@@ -13,3 +13,142 @@ Cartesian coordinate system is laid as follows:
 - X axis points to intersection between Greenwich meridian and equator (positives to East)
 - Y axis rotated to +90 degress along equatorial plane
 
+
+H - elevation above the geoid
+H is positive, when point is above geoid
+H is perpendicular to geoid (equipotential surface)
+H = orthometric height = elevation above geoid
+
+N = geoid separation
+N is measured from ellipsoid along ellipsoid normal until it reaches geoid
+
+h = N + H (approx.)
+h = geodetic height
+
+Geodetic system - framework, that helps to determine coordinates on Earth
+Typically system uses geocentric Cartesian coordinates (geocentric = (0,0,0) at Earth Mass center), but Z
+is pointing to the axis of Earth's rotation
+
+WGS is geodetic system, that consist of reference ellipsoid and geoid
+Basically, system defines its own (or uses existing) ellipsoid, from which calculations are made and geoid
+to represent Earth as it is. However the standard is worldwide = WGS
+
+There are also Local Geodetic Systems are called datums. Typically each LGS consist of:
+a) horizontal datum
+b) vertical datum
+
+(a) and (b) doesn't depend on each other! LGS covers only small Earth's area of interest
+
+Horizontal geodetic datums = earth-fixed (geocentric) reference ellipsoid
+Datum = horizontal datum (if not stated differently)
+
+Many LGS are connected to WGS.
+
+Vertical datum = geoid surface (Mean Sea Level) , where h = 0 and positive if h > 0
+
+///////////////////////////////// W G S 84
+WGS84:
+    - Z axis is parallel to Conventional Terrestrial Pole (CTP)
+    - CTP is where Z-X and Z-Y plane cross on pole
+    - Y axis point 90 degrees from Z and 90 deg from X
+    - X axis points to the point of intersection Z-X and Z-Y plane on equator
+    - is geocentric (0,0,0 at center of mass of Earth)
+
+///////////////////////// Shifting between datums
+Basically there are two main ways to shift:
+a) if you change rotation angle of new coordinate system, offset , and scale factor also changes
+b) if only offset present
+
+How to shift between TWO LOCAL DATUMS?
+Suppose we have two local datums (f) and (g), we want to shift from (f) to (g), how we do it?
+    1. Shift from datum (f) to WGS84
+    2. Shift from WGS84 to (g)
+
+////////////////// Map Projection !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Map projection done in 3 steps:
+    1. Goedetic coordinates (fi, teta, h) are reduced to ellipsoid (fi, teta, h=0)
+    2. fi and teta are transformed into planar coordinates x,y
+    3. Plot x,y on map
+
+Mapping equation - equation that transform fi and teta to x and y
+
+Conformal projection - preserving angles. For example, if on ellipsoid you can reach point B from point A, by
+walking on the same angle (alpha), then on conformal projection (map) you can reach same point B using the same
+(alpha) angle.
+
+Scale factor vs Map scale???
+--> Scale factor = ratio between arc on ellipsoid vs line on planar (map)
+--> Map scale (what is put on chart) = distance on map vs distance on ellipsoid
+For given map its "map scale" should change over the area of map very little amount (perfectly if reduced at all)
+
+Convergence of meridian is an angle between NORTH on map and meridian grid lines (see image)
+Convergence is positive clockwise and negative counterclockwise
+Do not mess convergence with declination (NORTH and MAGNETIC NORTH difference)
+
+//////// M E R C A T O R     P R O J E C T I O N
+    - scale factor = 1 at equator
+    - not defined at poles (NORHT POLE, SOUTH POLE do not use this projection)
+    - conformal projection
+    - equator at y = 0
+
+Parallels and meridians are used on Mercator projection
+Parallels are horisontal lines across map
+Meridians - vertical lines across map
+Parallel represent Y axis and satisfies (y = const)
+Meridians represent X axis and satisfies (x = const)
+At poles distance between parallels increasing due to distortion
+
+For example at 60 degrees of latitude the scale factor is approx. 2
+At 80 degrees - 5.7
+
+
+/////////// T R A N S V E R S E     M E R C A T O R
+scale factor = 1 at Greenwich Meridian (along vertical line)
+
+y = 0 is a equator parallel line
+x = 0 is a meridian vertical line (Greenwhich)
+
+The UTM (Universal Transverse Mercator) is modification of TM (Tranverse Mercator)
+
+Transverse Mercator = straight line at EQUATOR (parallel) and meridian (vertical)
+
+//////////// U N I V E R S A L    T R A N S V E R S E     M E R C A T O R
+While Transverse Mercator is used within 4 degrees of longitude (4W or 4E), then it is only practical use for
+England, Ireland, Scotland, Wales, but not Estonia
+
+For us is better to use modification of Transverse Mercator = Universal Transverse Mercator, that is used
+within 3 + 6 * n, where n = 0...59 degrees of longitude
+
+Scale factor along central meridian (Greenwich) is 0.9996
+
+y value is 0 at equator an 10 000 000m at North Pole
+y value is 10 000 000m at equator and 0 at South Pole
+
+x has origin of 500 000 at central meridian
+
+Basically:
+    x --> |
+          |
+          |
+    y --> _________________
+
+
+y called as NORTHING
+x called as EASTING
+
+UTM Projection use UTM Zones, in total there are 60 UTM zones, 6 degree each
+UTM Zones are covered in:
+    - 84 degree of NORTH
+    - 80 degree of SOUTH
+    - other areas are covered by Universal Polar Stereographic (UPS)
+First zone begin at longitude 180degrees --> 186 degrees and moving from WEST --> EAST
+
+To find UTM projection coordinates from geodetic coordinates:
+    1. First compute UTM Zone
+    2. Compute (radians value) central meridian
+    3. Knowing central meridian value go ahead and compute x,y of Transverse Mercator (UTM is based on TM):
+
+
+
+
+

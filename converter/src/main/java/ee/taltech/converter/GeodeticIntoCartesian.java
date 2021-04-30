@@ -11,8 +11,8 @@ public class GeodeticIntoCartesian {
         System.out.println();
         System.out.println();
         point_1.calculate_geodetic_coordinates(tallinn, point_1);
-        System.out.println("Geodetic latitude is " + point_1.find_latitude); // OK
-        System.out.println("Geodetic longitude is " + point_1.find_longitude); // OK
+        System.out.println("Geodetic latitude is " + point_1.find_latitude * 180/Math.PI); // OK
+        System.out.println("Geodetic longitude is " + point_1.find_longitude* 180/Math.PI); // OK
         System.out.println("Geodetic height is " + point_1.find_height); // OK, if latitude is hardcoded
     }
 }
