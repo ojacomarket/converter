@@ -1,3 +1,4 @@
+/*
 package ee.taltech.converter;
 
 import lombok.Data;
@@ -186,3 +187,4 @@ public void init (TransverseMercator_From_UTM_to_Geodetic utmtogeo, TransverseMe
         System.out.println("Longitude is " + utmtogeo.lon * 180/Math.PI);
     }
 }
+*/

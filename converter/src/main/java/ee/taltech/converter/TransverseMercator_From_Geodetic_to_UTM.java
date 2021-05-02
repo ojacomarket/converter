@@ -1,3 +1,4 @@
+/*
 package ee.taltech.converter;
 
 import lombok.Data;
@@ -189,6 +190,7 @@ public class TransverseMercator_From_Geodetic_to_UTM {
     public void calcUTMy() {
         utmy = 0.9996D * y; //Northen Hemisphere (EST)
     }
+
     public void init(TransverseMercator_From_Geodetic_to_UTM coords, WGS84 laagna, Place lm, UTMzone tln35) {
 
         //init
@@ -222,11 +224,14 @@ public class TransverseMercator_From_Geodetic_to_UTM {
         UTMzone tln35 = new UTMzone();
 
         coords.init(coords, laagna, lm, tln35);
-        /*System.err.println("TM X-coordinate is: " + coords.x);
-        System.err.println("TM Y-coordinate is: " + coords.y);*/
+        */
+/*System.err.println("TM X-coordinate is: " + coords.x);
+        System.err.println("TM Y-coordinate is: " + coords.y);*//*
+
 
         System.out.println("UTM X-coordinate is: " + coords.utmx);
         System.out.println("UTM Y-coordinate is: " + coords.utmy);
 
     }
 }
+*/

@@ -18,7 +18,11 @@ public class Math2 {
         return (Math.log10(value) / Math.log10(base));
     }
 
-    public static void main(String[] args) {
-        System.out.println(Math.exp(1));
+    public static double round (double value, double pointsAfterDot) {
+        double multiplier = 1D;
+        for (int i = 0; i < pointsAfterDot; i++) {
+            multiplier *= 10D;
+        }
+        return Math.round(value * multiplier) / multiplier;
     }
 }

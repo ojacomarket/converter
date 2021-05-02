@@ -1,3 +1,4 @@
+/*
 package ee.taltech.converter;
 
 import lombok.Data;
@@ -11,3 +12,4 @@ public class Test extends Place{
     private double geodetic_longitude;
     private double geodetic_height;
 }
+*/

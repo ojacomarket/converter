@@ -1,3 +1,4 @@
+/*
 package ee.taltech.converter;
 
 import lombok.Data;
@@ -20,3 +21,4 @@ public class UTMzone {
 
 
 }
+*/

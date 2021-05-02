@@ -1,9 +1,10 @@
+/*
 package ee.taltech.converter;
 
 public class GeodeticIntoCartesian {
     public static void main(String[] args) {
         WGS84 tallinn = new WGS84();
-        Kaev_Left point_1 = new Kaev_Left();
+        PointOfInterest point_1 = new PointOfInterest();
         point_1.calculate_cartesian_coordinates(tallinn, point_1);
         System.out.println("Cartesian X is " + point_1.cartesian_x);
         System.out.println("Cartesian Y is " + point_1.cartesian_y);
@@ -17,3 +18,4 @@ public class GeodeticIntoCartesian {
     }
 }
     
+*/

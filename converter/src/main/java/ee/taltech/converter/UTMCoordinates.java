@@ -1,3 +1,4 @@
+/*
 package ee.taltech.converter;
 
 public class UTMCoordinates {
@@ -11,3 +12,4 @@ public class UTMCoordinates {
 
     }
 }
+*/

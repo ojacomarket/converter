@@ -1,3 +1,4 @@
+/*
 package ee.taltech.converter;
 
 import lombok.Getter;
@@ -293,3 +294,4 @@ public class Lambert_Projection_From_Geodetic_To_LEST97 {
 
     }
 }
+*/
