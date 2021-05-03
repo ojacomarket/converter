@@ -7,6 +7,7 @@ import lombok.*;
 
 @Getter
 @RequiredArgsConstructor
+@ToString
 public class Cartesian<T extends Ellipsoid> extends CoordinateSystem implements CartesianCoordinates<T> {
     @NonNull
     private final double x;

@@ -5,7 +5,7 @@ import ee.taltech.converter.utm.UTM;
 
 import java.util.List;
 
-public interface GeodeticCoordinates<E extends Ellipsoid>{
+public interface GeodeticCoordinates<E extends Ellipsoid> extends Projection<E>{
     default double curvatureRadius(Geodetic<E> point, E ellipsoid) {
         System.out.println(ellipsoid.majorRadius);
         return ellipsoid.majorRadius / (Math.sqrt

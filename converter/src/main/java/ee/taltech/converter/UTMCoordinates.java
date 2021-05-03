@@ -7,17 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface UTMCoordinates<E extends Ellipsoid> {
-    private double calculateN(E earth, double latitude) {
+    default double calculateN(E earth, double latitude) {
         double element1 = earth.majorRadius;
         double element2 = (Math.pow(earth.eccentricity, 2)) * Math.pow(Math.sin(latitude), 2);
-
         return element1 / (Math.sqrt(1 - (element2)));
     }
 
     default double calculateZone(double longitude) {
-        // from Greenwich to 180 degrees EAST (Estonia is there ca 24 degrees)
         double greaterValue = 31 + ((180 * longitude) / (Math.PI * 6));
-        return Math.round(greaterValue); //Estonia is located in [<-- 34 <--> 35 -->] /// UTM Zones
+        return Math.round(greaterValue);
     }
 
     default double calculateCentralMeridianByLongitude(double longitude) {
@@ -32,17 +30,14 @@ public interface UTMCoordinates<E extends Ellipsoid> {
     private double calculateLambda(Geodetic<E> point) {
         double centralMeridian = calculateCentralMeridianByLongitude(point.getLongitude());
         double element1 = point.getLongitude();
-
         return element1 - centralMeridian; //must be in radians
     }
 
     private double calculateT(double latitude) {
-
         return Math.tan(latitude); //number
     }
 
     private double calculateEeta(double latitude, E earth) {
-
         return earth.eccentricity_ * (Math.cos(latitude));
     }
 
@@ -160,7 +155,6 @@ public interface UTMCoordinates<E extends Ellipsoid> {
     }
 
     private List<Double> calculateB(double latitude, E earth, double eeta, double t) {
-
         List<Double> values = new ArrayList<>();
         double element1 = 1;
         double element2 = (2 * Math.pow(t, 2));
@@ -198,14 +192,14 @@ public interface UTMCoordinates<E extends Ellipsoid> {
     default double calculateLatitude(UTM<E> point, E earth) {
         double latitude = calculateLatitude2(point, earth);
         double t = calculateT(latitude);
-        double n = calculateN(earth, latitude);
+        double n1 = calculateN(earth, latitude);
         double r = calculateR(earth, latitude);
         double eeta = calculateEeta(latitude, earth);
         List<Double> valuesOfB = calculateB(latitude, earth, eeta, t);
-        double element2 = (t * n) / r;
-        double element3 = (Math.pow((point.getX() / n), 2)) / 2;
-        double element4 = -((Math.pow((point.getX() / n), 4) * valuesOfB.get(1)) / 24);
-        double element5 = ((Math.pow((point.getX() / n), 6)) * valuesOfB.get(3)) / 720;
+        double element2 = (t * n1) / r;
+        double element3 = (Math.pow((point.getX() / n1), 2)) / 2;
+        double element4 = -((Math.pow((point.getX() / n1), 4) * valuesOfB.get(1)) / 24);
+        double element5 = ((Math.pow((point.getX() / n1), 6)) * valuesOfB.get(3)) / 720;
         double element6 = -((element2) * ((element3) + (element4) + (element5)));
         return (latitude) + (element6);
     }

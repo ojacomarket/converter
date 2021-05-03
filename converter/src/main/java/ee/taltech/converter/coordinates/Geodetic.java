@@ -7,6 +7,7 @@ import lombok.*;
 
 @Getter
 @Setter
+@ToString
 public class Geodetic<T extends Ellipsoid> extends CoordinateSystem implements GeodeticCoordinates<T>, UTMCoordinates<T> {
     private double latitude;
     private double longitude;
