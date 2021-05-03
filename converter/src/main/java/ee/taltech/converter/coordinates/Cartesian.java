@@ -2,7 +2,7 @@ package ee.taltech.converter.coordinates;
 
 import ee.taltech.converter.CartesianCoordinates;
 import ee.taltech.converter.Ellipsoid;
-import ee.taltech.converter.GeodeticCoordinates;
+
 import lombok.*;
 
 @Getter

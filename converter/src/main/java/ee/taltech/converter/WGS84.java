@@ -5,11 +5,11 @@ import lombok.*;
 @Getter
 public class WGS84 extends Ellipsoid implements DescribeEarth, GeodeticCoordinates<WGS84> {
 
-    public WGS84 () {
+    public WGS84() {
         super(6378137D, 6356752D);
-        flattening = flattening(majorRadius,minorRadius);
+        flattening = flattening(majorRadius, minorRadius);
         eccentricity = eccentricity(majorRadius, minorRadius);
-        eccentricity_ = eccentricity_(majorRadius,minorRadius);
+        eccentricity_ = eccentricity_(majorRadius, minorRadius);
     }
 
     //private final double majorRadius = 6378137D;

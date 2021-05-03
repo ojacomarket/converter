@@ -12,4 +12,6 @@ abstract public class Ellipsoid {
     protected double eccentricity;
     protected double eccentricity_;
     protected double flattening;
+    protected double eccentricitySquare;
+    protected double eccentricitySquare_;
 }

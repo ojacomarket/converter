@@ -48,8 +48,8 @@ public interface CartesianCoordinates<E extends Ellipsoid> {
         return latitude;
     }
 
-    default double calculateHeight(Cartesian<E> point, Geodetic<E> point2 , E earth) {
-        point2.setCurvatureRadius(point2.curvatureRadius(point2,earth));
+    default double calculateHeight(Cartesian<E> point, Geodetic<E> point2, E earth) {
+        point2.setCurvatureRadius(point2.curvatureRadius(point2, earth));
         return ((Math.sqrt(Math.pow(point.getX(), 2) + Math.pow(point.getY(), 2))) /
                 (Math.cos(point2.getLatitude()))) - point2.getCurvatureRadius();
     }

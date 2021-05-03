@@ -7,11 +7,12 @@ public interface DescribeEarth {
     }
 
     default double eccentricity(double major_radius, double minor_radius) {
-        double squared = (Math.pow(major_radius, 2) - Math.pow(minor_radius, 2)) / Math.pow(major_radius,2);
+        double squared = (Math.pow(major_radius, 2) - Math.pow(minor_radius, 2)) / Math.pow(major_radius, 2);
         return Math.sqrt(squared);
     }
+
     default double eccentricity_(double major_radius, double minor_radius) {
-        double squared = (Math.pow(major_radius, 2) - Math.pow(minor_radius, 2)) / Math.pow(minor_radius,2);
+        double squared = (Math.pow(major_radius, 2) - Math.pow(minor_radius, 2)) / Math.pow(minor_radius, 2);
         return Math.sqrt(squared);
     }
 }
