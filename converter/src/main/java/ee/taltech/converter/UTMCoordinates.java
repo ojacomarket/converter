@@ -1,29 +1,165 @@
 package ee.taltech.converter;
 
 import ee.taltech.converter.coordinates.Geodetic;
-import ee.taltech.converter.utm.UTM;
+import ee.taltech.converter.lib.Math2;
+import ee.taltech.converter.coordinates.UTM;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Interface, that provides functionality to convert UTM coordinates into Geodetic coordinates and vice versa.
+ * Also provides utility functions for Projection interface.
+ *
+ * @param <E> Is an Ellipsoid model, that currently in use within coordinate system, for most of the time
+ *            it is WGS84.
+ */
 public interface UTMCoordinates<E extends Ellipsoid> {
+    /**
+     * Method, that serves a constant, which is critical for UTM coordinates calculation.
+     *
+     * @param earth    Ellipsoid model, that is currently in use (typically WGS84).
+     * @param latitude Geodetic latitude value.
+     * @return Constant value, goes into general equation as additional parameter.
+     */
     default double calculateN(E earth, double latitude) {
         double element1 = earth.majorRadius;
         double element2 = (Math.pow(earth.eccentricity, 2)) * Math.pow(Math.sin(latitude), 2);
         return element1 / (Math.sqrt(1 - (element2)));
     }
 
+    /**
+     * Method used to calculate current UTM zone, based on provided longitude value.
+     *
+     * @param longitude Value that represents Geodetic longitude.
+     * @return UTM zone number.
+     */
     default double calculateZone(double longitude) {
         double greaterValue = 31 + ((180 * longitude) / (Math.PI * 6));
         return Math.round(greaterValue);
     }
 
-    default double calculateCentralMeridianByLongitude(double longitude) {
+    /**
+     * Method used to calculate Transverse Mercator coordinate's X value.
+     *
+     * @param point Surveyed point in Geodetic coordinates.
+     * @param earth Ellipsoid model, that is currently in use (typically WGS84).
+     * @return Transverse Mercator X coordinate.
+     */
+    default double calculateTMx(Geodetic<E> point, E earth) {
+        double n = calculateN(earth, point.getLatitude());
+        double lambda = calculateLambda(point);
+        double t = calculateT(point.getLatitude());
+        double eeta = calculateEeta(point.getLatitude(), earth);
+        double element1 = n * lambda * Math.cos(point.getLatitude());
+        double element21 = n * Math.pow(lambda, 3) * Math.pow(Math.cos(point.getLatitude()), 3);
+        double element22 = (1 - Math.pow(t, 2) + Math.pow(eeta, 2));
+        double element31 = n * Math.pow(lambda, 5) * Math.pow(Math.cos(point.getLatitude()), 5);
+        double element32 = 5 - (18 * Math.pow(t, 2)) + Math.pow(t, 4) + (14 * Math.pow(eeta, 2)) - (58 * Math.pow(t, 2) * Math.pow(eeta, 2));
+        return (element1 + ((element21 * element22) / 6) + ((element31 * element32) / 120));
+    }
+
+    /**
+     * Method used to calculate Transverse Mercator coordinate's Y value.
+     *
+     * @param point Surveyed point in Geodetic coordinates.
+     * @param earth Ellipsoid model, that is currently in use (typically WGS84).
+     * @return Transverse Mercator Y coordinate.
+     */
+    default double calculateTMy(Geodetic<E> point, E earth) {
+        double n = calculateN(earth, point.getLatitude());
+        double lambda = calculateLambda(point);
+        double t = calculateT(point.getLatitude());
+        double eeta = calculateEeta(point.getLatitude(), earth);
+        double sf = calculateSf(earth, point.getLatitude());
+        double element2_1 = (n * Math.pow(lambda, 2)) / 2;
+        double element2_2 = Math.sin(point.getLatitude()) * Math.cos(point.getLatitude());
+        double element3_1 = (n * Math.pow(lambda, 4)) / 24;
+        double element3_2 = Math.sin(point.getLatitude()) * Math.pow(Math.cos(point.getLatitude()), 3);
+        double element3_3 = 5 - Math.pow(t, 2) + (Math.pow(eeta, 2) * 9) + ((Math.pow(eeta, 4)) * 4);
+        double element4_1 = (n * Math.pow(lambda, 6)) / 720;
+        double element4_2 = Math.sin(point.getLatitude()) * Math.pow(Math.cos(point.getLatitude()), 5);
+        double element4_3 = 61 - (Math.pow(t, 2) * 58) + Math.pow(t, 4) + (Math.pow(eeta, 2) * 270) - (330 * Math.pow(t, 2) * Math.pow(eeta, 2));
+        return (sf + ((element2_1) * (element2_2)) + ((element3_1) * (element3_2) * (element3_3)) + ((element4_1) * (element4_2) * (element4_3)));
+    }
+
+    /**
+     * Method used to calculate Universal Transverse Mercator coordinate's X value.
+     *
+     * @param point Surveyed point in Geodetic coordinates.
+     * @param earth Ellipsoid model, that is currently in use (typically WGS84).
+     * @return Universal Transverse Mercator X coordinate.
+     */
+    default double calculateUTMx(Geodetic<E> point, E earth) {
+        double TMx = calculateTMx(point, earth);
+        return (0.9996D * TMx) + 500_000;
+    }
+
+    /**
+     * Method used to calculate Universal Transverse Mercator coordinate's Y value.
+     *
+     * @param point Surveyed point in Geodetic coordinates.
+     * @param earth Ellipsoid model, that is currently in use (typically WGS84).
+     * @return Universal Transverse Mercator Y coordinate.
+     */
+    default double calculateUTMy(Geodetic<E> point, E earth) {
+        double TMy = calculateTMy(point, earth);
+        return 0.9996D * TMy;
+    }
+
+    /**
+     * Method to convert TM coordinate's X value into Geodetic coordinate's latitude.
+     *
+     * @param point Surveyed point in Transverse Mercator coordinates.
+     * @param earth Ellipsoid model, that is currently in use (typically WGS84).
+     * @return Latitude value of the surveyed point.
+     */
+    default double calculateLatitude(UTM<E> point, E earth) {
+        double latitude = calculateLatitude2(point, earth);
+        double t = calculateT(latitude);
+        double n1 = calculateN(earth, latitude);
+        double r = calculateR(earth, latitude);
+        double eeta = calculateEeta(latitude, earth);
+        List<Double> valuesOfB = calculateB(latitude, earth, eeta, t);
+        double element2 = (t * n1) / r;
+        double element3 = (Math.pow((point.getX() / n1), 2)) / 2;
+        double element4 = -((Math.pow((point.getX() / n1), 4) * valuesOfB.get(1)) / 24);
+        double element5 = ((Math.pow((point.getX() / n1), 6)) * valuesOfB.get(3)) / 720;
+        double element6 = -((element2) * ((element3) + (element4) + (element5)));
+        return (latitude) + (element6);
+    }
+
+    /**
+     * Method to convert Transverse Mercator coordinate's Y value into Geodetic coordinate's longitude.
+     *
+     * @param point Surveyed point in Transverse Mercator coordinates.
+     * @param earth Ellipsoid model, that is currently in use (typically WGS84).
+     * @param zone  UTM zone
+     * @return Longitude value of the surveyed point.
+     */
+    default double calculateLongitude(UTM<E> point, E earth, double zone) {
+        double latitude = calculateLatitude2(point, earth);
+        double n = calculateN(earth, latitude);
+        double eeta = calculateEeta(latitude, earth);
+        double t = calculateT(latitude);
+        List<Double> valuesOfB = calculateB(latitude, earth, eeta, t);
+        double element1 = calculateCentralMeridianByZone(zone);
+        double element2 = point.getX() / n;
+        double element3 = -((Math.pow((point.getX() / n), 3) * valuesOfB.get(0)) / 6);
+        double element4 = (Math.pow((point.getX() / n), 5) * valuesOfB.get(2)) / 120;
+        double element5 = (element2) + (element3) + (element4);
+        double element6 = Math2.sec(latitude);
+        double element7 = (element6) * (element5);
+        return (element1) + (element7);
+    }
+
+    //region utility methods
+    private double calculateCentralMeridianByLongitude(double longitude) {
         double zone = calculateZone(longitude);
         return ((6 * zone) - 183) * (Math.PI / 180);
     }
 
-    default double calculateCentralMeridianByZone(double zone) {
+    private double calculateCentralMeridianByZone(double zone) {
         return ((6 * zone) - 183) * (Math.PI / 180);
     }
 
@@ -41,7 +177,7 @@ public interface UTMCoordinates<E extends Ellipsoid> {
         return earth.eccentricity_ * (Math.cos(latitude));
     }
 
-    default List<Double> calculateA(E earth) {
+    private List<Double> calculateA(E earth) {
         List<Double> values = new ArrayList<>();
         double element1 = -((Math.pow(earth.eccentricity, 2)) / 4);
         double element2 = -((Math.pow(earth.eccentricity, 4) * 3) / 64);
@@ -69,7 +205,7 @@ public interface UTMCoordinates<E extends Ellipsoid> {
         return values;
     }
 
-    default double calculateSf(E earth, double latitude) {
+    private double calculateSf(E earth, double latitude) {
         List<Double> valuesOfA = calculateA(earth);
         double element1 = earth.majorRadius;
         double element2 = (valuesOfA.get(0)) * latitude;
@@ -78,46 +214,6 @@ public interface UTMCoordinates<E extends Ellipsoid> {
         double element5 = -((valuesOfA.get(3)) * Math.sin(6 * (latitude)));
         double element6 = (valuesOfA.get(4)) * Math.sin(8 * (latitude));
         return element1 * (element2 + element3 + element4 + element5 + element6);
-    }
-
-    default double calculateTMx(Geodetic<E> point, E earth) {
-        double n = calculateN(earth, point.getLatitude());
-        double lambda = calculateLambda(point);
-        double t = calculateT(point.getLatitude());
-        double eeta = calculateEeta(point.getLatitude(), earth);
-        double element1 = n * lambda * Math.cos(point.getLatitude());
-        double element21 = n * Math.pow(lambda, 3) * Math.pow(Math.cos(point.getLatitude()), 3);
-        double element22 = (1 - Math.pow(t, 2) + Math.pow(eeta, 2));
-        double element31 = n * Math.pow(lambda, 5) * Math.pow(Math.cos(point.getLatitude()), 5);
-        double element32 = 5 - (18 * Math.pow(t, 2)) + Math.pow(t, 4) + (14 * Math.pow(eeta, 2)) - (58 * Math.pow(t, 2) * Math.pow(eeta, 2));
-        return (element1 + ((element21 * element22) / 6) + ((element31 * element32) / 120));
-    }
-
-    default double calculateTMy(Geodetic<E> point, E earth) {
-        double n = calculateN(earth, point.getLatitude());
-        double lambda = calculateLambda(point);
-        double t = calculateT(point.getLatitude());
-        double eeta = calculateEeta(point.getLatitude(), earth);
-        double sf = calculateSf(earth, point.getLatitude());
-        double element2_1 = (n * Math.pow(lambda, 2)) / 2;
-        double element2_2 = Math.sin(point.getLatitude()) * Math.cos(point.getLatitude());
-        double element3_1 = (n * Math.pow(lambda, 4)) / 24;
-        double element3_2 = Math.sin(point.getLatitude()) * Math.pow(Math.cos(point.getLatitude()), 3);
-        double element3_3 = 5 - Math.pow(t, 2) + (Math.pow(eeta, 2) * 9) + ((Math.pow(eeta, 4)) * 4);
-        double element4_1 = (n * Math.pow(lambda, 6)) / 720;
-        double element4_2 = Math.sin(point.getLatitude()) * Math.pow(Math.cos(point.getLatitude()), 5);
-        double element4_3 = 61 - (Math.pow(t, 2) * 58) + Math.pow(t, 4) + (Math.pow(eeta, 2) * 270) - (330 * Math.pow(t, 2) * Math.pow(eeta, 2));
-        return (sf + ((element2_1) * (element2_2)) + ((element3_1) * (element3_2) * (element3_3)) + ((element4_1) * (element4_2) * (element4_3)));
-    }
-
-    default double calculateUTMx(Geodetic<E> point, E earth) {
-        double TMx = calculateTMx(point, earth);
-        return (0.9996D * TMx) + 500_000;
-    }
-
-    default double calculateUTMy(Geodetic<E> point, E earth) {
-        double TMy = calculateTMy(point, earth);
-        return 0.9996D * TMy;
     }
 
     private double calculateLatitude2(UTM<E> point, E earth) {
@@ -188,35 +284,5 @@ public interface UTMCoordinates<E extends Ellipsoid> {
         values.add(B6);
         return values;
     }
-
-    default double calculateLatitude(UTM<E> point, E earth) {
-        double latitude = calculateLatitude2(point, earth);
-        double t = calculateT(latitude);
-        double n1 = calculateN(earth, latitude);
-        double r = calculateR(earth, latitude);
-        double eeta = calculateEeta(latitude, earth);
-        List<Double> valuesOfB = calculateB(latitude, earth, eeta, t);
-        double element2 = (t * n1) / r;
-        double element3 = (Math.pow((point.getX() / n1), 2)) / 2;
-        double element4 = -((Math.pow((point.getX() / n1), 4) * valuesOfB.get(1)) / 24);
-        double element5 = ((Math.pow((point.getX() / n1), 6)) * valuesOfB.get(3)) / 720;
-        double element6 = -((element2) * ((element3) + (element4) + (element5)));
-        return (latitude) + (element6);
-    }
-
-    default double calculateLongitude(UTM<E> point, E earth, double zone) {
-        double latitude = calculateLatitude2(point, earth);
-        double n = calculateN(earth, latitude);
-        double eeta = calculateEeta(latitude, earth);
-        double t = calculateT(latitude);
-        List<Double> valuesOfB = calculateB(latitude, earth, eeta, t);
-        double element1 = calculateCentralMeridianByZone(zone);
-        double element2 = point.getX() / n;
-        double element3 = -((Math.pow((point.getX() / n), 3) * valuesOfB.get(0)) / 6);
-        double element4 = (Math.pow((point.getX() / n), 5) * valuesOfB.get(2)) / 120;
-        double element5 = (element2) + (element3) + (element4);
-        double element6 = Math2.sec(latitude);
-        double element7 = (element6) * (element5);
-        return (element1) + (element7);
-    }
+    //endregion
 }

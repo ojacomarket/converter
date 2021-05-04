@@ -3,8 +3,15 @@ package ee.taltech.converter.coordinates;
 import ee.taltech.converter.Ellipsoid;
 import ee.taltech.converter.GeodeticCoordinates;
 import ee.taltech.converter.UTMCoordinates;
+import ee.taltech.converter.CoordinateSystem;
 import lombok.*;
 
+/**
+ * Class that represents structure of Geodetic coordinate system.
+ *
+ * @param <T> Is an Ellipsoid model, that currently in use within coordinate system, for most of the time
+ *            it is WGS84.
+ */
 @Getter
 @Setter
 @ToString

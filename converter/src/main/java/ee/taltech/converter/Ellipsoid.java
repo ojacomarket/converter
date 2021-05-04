@@ -3,6 +3,9 @@ package ee.taltech.converter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Abstract class to serve general parameters, which should each ellipsoid model have.
+ */
 @RequiredArgsConstructor
 abstract public class Ellipsoid {
     @NonNull
@@ -12,6 +15,4 @@ abstract public class Ellipsoid {
     protected double eccentricity;
     protected double eccentricity_;
     protected double flattening;
-    protected double eccentricitySquare;
-    protected double eccentricitySquare_;
 }

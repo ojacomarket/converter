@@ -1,7 +1,6 @@
 package ee.taltech.converter;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
+import ee.taltech.converter.lib.Math2;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

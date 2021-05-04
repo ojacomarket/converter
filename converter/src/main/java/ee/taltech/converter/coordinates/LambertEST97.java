@@ -1,11 +1,17 @@
-package ee.taltech.converter.lambert;
+package ee.taltech.converter.coordinates;
 
 import ee.taltech.converter.Ellipsoid;
-import ee.taltech.converter.Math2;
+import ee.taltech.converter.lib.Math2;
 import ee.taltech.converter.Projection;
-import ee.taltech.converter.coordinates.CoordinateSystem;
+import ee.taltech.converter.CoordinateSystem;
 import lombok.*;
 
+/**
+ * Class that represents structure of Lambert EST97 coordinate system.
+ *
+ * @param <T> Is an Ellipsoid model, that currently in use within coordinate system, for most of the time
+ *            it is WGS84.
+ */
 @Getter
 @Setter
 @RequiredArgsConstructor
